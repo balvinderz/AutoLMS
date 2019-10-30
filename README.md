@@ -1,8 +1,7 @@
 # AutoLMS
 Auto Lms - The name says it all.
-ya the best app so far over 1500 user's 
-
-Using selenium this app can connect to our college website and does all the online material view 
+This app is being used by 1.7k students
+Using htmlunit this app can connect to our college website and does all the online material view 
 
 # Task done
 
