@@ -8,7 +8,7 @@
     android:layout_height="wrap_content"
 
     android:id="@+id/subject"/>
-    <android.support.v4.widget.ContentLoadingProgressBar
+    <androidx.core.widget.ContentLoadingProgressBar
         android:id="@+id/my_progressBar"
         android:indeterminate="false"
         android:max="100"

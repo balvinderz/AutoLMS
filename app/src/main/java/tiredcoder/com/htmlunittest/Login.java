@@ -7,13 +7,12 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.text.Html;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+
 import android.util.Log;
-import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -26,10 +25,6 @@ import android.widget.Toast;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.WebWindowEvent;
 import com.gargoylesoftware.htmlunit.WebWindowListener;
-import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
-import com.gargoylesoftware.htmlunit.html.HtmlButton;
-import com.gargoylesoftware.htmlunit.html.HtmlFileInput;
-import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlInput;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlSubmitInput;
@@ -204,66 +199,70 @@ void startAutomode(String email,String password)
 
 
              //  for(int i=0;i<table.size();i++)
-               for(int i=0;i<table.size();i++)
-                {
-                    progressBar.setProgress(0);
+               for(int i=0;i<table.size();i++) {
+                   progressBar.setProgress(0);
 
-                    Elements td=table.eq(i).select("td");
-                    String link=td.select("a").attr("href");
-                    String name=td.eq(0).text();
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            subjectname.setText(name);
-                        }
-                    });
-                    //   String templink=anchor.get(i).getHrefAttribute();
-                    int index=link.indexOf("?id=");
-                    int id=Integer.parseInt(link.substring(index+4,link.length()));
+                   Elements td = table.eq(i).select("td");
+                   for (int m = 0; m< td.size(); m++)
+                   {
+                       String link = td.eq(m).select("a").attr("href");
+                   String name = td.eq(m).select("h4").get(0).text();
 
-                    page=client.getPage("http://mydy.dypatil.edu/rait/course/customview.php?id="+id);
-                    org.jsoup.nodes.Document mainpage =Jsoup.parse(page.getWebResponse().getContentAsString());
-                    Elements activityinstance=mainpage.select("a[class=pending]");
-                    if(quizchecked==1) {
-                        Elements forquiz = mainpage.select("a[class=completed]");
-                        for (int j = 0; j < forquiz.size(); j++)
-                            if (forquiz.get(j).attr("href").contains("quiz"))
-                                quizlinks.add(forquiz.get(j).attr("href"));
-                    }
-                    for ( j=0;j<activityinstance.size();j++) {
-                        page=client.getPage(activityinstance.get(j).attr("href"));
-                        if(activityinstance.get(j).attr("href").contains("forum")&&check.isChecked() && page.getByXPath("//*[@id=\"newdiscussionform\"]/div/input[2]").size()>0)
-                        {    HtmlSubmitInput button= (HtmlSubmitInput) page.getByXPath("//*[@id=\"newdiscussionform\"]/div/input[2]").get(0);
+                   runOnUiThread(new Runnable() {
+                       @Override
+                       public void run() {
+                           subjectname.setText(name);
+                       }
+                   });
+                   //   String templink=anchor.get(i).getHrefAttribute();
+                   int index = link.indexOf("?id=");
+                   int id = Integer.parseInt(link.substring(index + 4, link.length()));
 
-                page=button.click();
-                query=page.getElementByName("subject");
-                query.setValueAttribute(".");
-               // query=page.getElementByName("message[text]");
-                HtmlTextArea textArea= (HtmlTextArea) page.getElementByName("message[text]");
-                textArea.setText(".");
-                query.setValueAttribute(".");
-                HtmlSubmitInput submitform= (HtmlSubmitInput) page.getElementByName("submitbutton");
-                submitform.click(); }
+                   page = client.getPage("http://mydy.dypatil.edu/rait/course/customview.php?id=" + id);
+                   org.jsoup.nodes.Document mainpage = Jsoup.parse(page.getWebResponse().getContentAsString());
+                   Elements activityinstance = mainpage.select("a[class=pending]");
+                   if (quizchecked == 1) {
+                       Elements forquiz = mainpage.select("a[class=completed]");
+                       for (int j = 0; j < forquiz.size(); j++)
+                           if (forquiz.get(j).attr("href").contains("quiz"))
+                               quizlinks.add(forquiz.get(j).attr("href"));
+                   }
+                   for (j = 0; j < activityinstance.size(); j++) {
+                       page = client.getPage(activityinstance.get(j).attr("href"));
+                       if (activityinstance.get(j).attr("href").contains("forum") && check.isChecked() && page.getByXPath("//*[@id=\"newdiscussionform\"]/div/input[2]").size() > 0) {
+                           HtmlSubmitInput button = (HtmlSubmitInput) page.getByXPath("//*[@id=\"newdiscussionform\"]/div/input[2]").get(0);
 
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                count.setText(j+"/"+activityinstance.size());
-                                progressBar.setProgress((100 *j)/activityinstance.size());
+                           page = button.click();
+                           query = page.getElementByName("subject");
+                           query.setValueAttribute(".");
+                           // query=page.getElementByName("message[text]");
+                           HtmlTextArea textArea = (HtmlTextArea) page.getElementByName("message[text]");
+                           textArea.setText(".");
+                           query.setValueAttribute(".");
+                           HtmlSubmitInput submitform = (HtmlSubmitInput) page.getElementByName("submitbutton");
+                           submitform.click();
+                       }
 
-                            }
-                        });
-                    }
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            progressBar.setProgress(100);
-                            Toast.makeText(Login.this,name+" completed",Toast.LENGTH_SHORT).show();
+                       runOnUiThread(new Runnable() {
+                           @Override
+                           public void run() {
+                               count.setText(j + "/" + activityinstance.size());
+                               progressBar.setProgress((100 * j) / activityinstance.size());
 
-                        }
-                    });
-                    //    HtmlAnchor link=(HtmlAnchor)page.getByXPath("//div[@class='content']/a").get(0);
-                    //    Log.i("anchors",link.getHrefAttribute());
+                           }
+                       });
+                   }
+                   runOnUiThread(new Runnable() {
+                       @Override
+                       public void run() {
+                           progressBar.setProgress(100);
+                           Toast.makeText(Login.this, name + " completed", Toast.LENGTH_SHORT).show();
+
+                       }
+                   });
+                   //    HtmlAnchor link=(HtmlAnchor)page.getByXPath("//div[@class='content']/a").get(0);
+                   //    Log.i("anchors",link.getHrefAttribute());
+               }
                 }
 
                if(quizchecked==1) {
